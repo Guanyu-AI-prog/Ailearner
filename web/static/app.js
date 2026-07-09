@@ -1,3 +1,5 @@
+marked.setOptions({ breaks: true, gfm: true });
+
 const chatMessages = document.getElementById('chat-messages');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
@@ -18,7 +20,7 @@ function addMessage(role, content) {
     div.className = `message ${role}`;
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
-    contentDiv.innerHTML = renderMarkdown(content);
+    contentDiv.innerHTML = marked.parse(content);
     div.appendChild(contentDiv);
     chatMessages.appendChild(div);
     scrollToBottom();
@@ -30,7 +32,6 @@ function createAssistantMessage() {
     div.className = 'message assistant';
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
-    // Add typing indicator
     const typing = document.createElement('div');
     typing.className = 'typing-indicator';
     typing.innerHTML = '<span></span><span></span><span></span>';
@@ -42,7 +43,6 @@ function createAssistantMessage() {
 }
 
 function updateAssistantContent(contentDiv, text, append = false) {
-    // Remove typing indicator
     const typing = contentDiv.querySelector('.typing-indicator');
     if (typing) typing.remove();
 
@@ -51,7 +51,7 @@ function updateAssistantContent(contentDiv, text, append = false) {
     } else {
         currentStreamContent = text;
     }
-    contentDiv.innerHTML = renderMarkdown(currentStreamContent);
+    contentDiv.innerHTML = marked.parse(currentStreamContent);
     scrollToBottom();
 }
 
@@ -59,7 +59,7 @@ function finalizeAssistantContent(contentDiv) {
     const typing = contentDiv.querySelector('.typing-indicator');
     if (typing) typing.remove();
     if (currentStreamContent) {
-        contentDiv.innerHTML = renderMarkdown(currentStreamContent);
+        contentDiv.innerHTML = marked.parse(currentStreamContent);
     }
     currentStreamContent = '';
     isStreaming = false;
@@ -117,7 +117,6 @@ async function sendMessage() {
                         if (parsed.type === 'content') {
                             updateAssistantContent(contentDiv, parsed.text, true);
                         } else if (parsed.type === 'status') {
-                            // Show status messages in a smaller style
                             const statusDiv = contentDiv.querySelector('.status-info') || document.createElement('div');
                             statusDiv.className = 'status-info';
                             statusDiv.style.cssText = 'font-size: 0.85em; color: #6c757d; margin: 8px 0;';
@@ -136,64 +135,4 @@ async function sendMessage() {
     }
 
     finalizeAssistantContent(contentDiv);
-}
-
-function renderMarkdown(text) {
-    if (!text) return '';
-
-    // Escape HTML
-    text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-    // Images
-    text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%">');
-    // Links
-    text = text.replace(/\[([^\]]*)\]\(([^)]+)\)/g, function(match, linkText, url) {
-        if (!/^https?:\/\//i.test(url)) return match;
-        return '<a href="' + url + '" target="_blank" rel="noopener">' + linkText + '</a>';
-    });
-
-    // Headers
-    text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-    text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-
-    // Bold and italic
-    text = text.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
-    text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
-
-    // Inline code
-    text = text.replace(/`(.+?)`/g, '<code>$1</code>');
-
-    // Horizontal rules
-    text = text.replace(/^---$/gm, '<hr>');
-
-    // Unordered lists
-    text = text.replace(/^- (.+)$/gm, '<li>$1</li>');
-    text = text.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
-
-    // Ordered lists
-    text = text.replace(/^\d+\.\s(.+)$/gm, '<li>$1</li>');
-    text = text.replace(/(<li>.*<\/li>\n?)+/g, (match) => {
-        return match.startsWith('<ul>') ? match : '<ol>' + match + '</ol>';
-    });
-
-    // Fix nested list issue
-    text = text.replace(/<\/ul>\n?<ul>/g, '');
-    text = text.replace(/<\/ol>\n?<ol>/g, '');
-
-    // Line breaks - double newline = paragraph
-    text = text.replace(/\n\n/g, '</p><p>');
-
-    // Single newline = <br>
-    text = text.replace(/\n/g, '<br>');
-
-    // Wrap in paragraph if not already
-    if (!text.startsWith('<h') && !text.startsWith('<ul') && !text.startsWith('<ol') && !text.startsWith('<hr')) {
-        text = '<p>' + text + '</p>';
-    }
-
-    // Clean up empty paragraphs
-    text = text.replace(/<p><\/p>/g, '');
-
-    return text;
 }
