@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI 学习引路人{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <span class="logo-icon">?</span>
+                AI 学习引路人
+            </a>
+            <nav>
+                <a href="/">首页</a>
+                <a href="/chat">开始对话</a>
+            </nav>
+        </div>
+    </header>
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>AI 学习引路人 - 帮你找到最适合的 AI 学习路径</p>
+        </div>
+    </footer>
+    <script src="/static/app.js"></script>
+</body>
+</html>
