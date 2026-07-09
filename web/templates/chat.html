@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 {% block title %}AI 学习引路人 - 对话{% endblock %}
+{% block head %}
+<style>
+    .site-header, .site-footer { display: none; }
+    .chat-container { height: 100vh; }
+</style>
+{% endblock %}
 {% block content %}
 <div class="chat-container">
-    <div class="chat-header">
-        <h2>AI 学习引路人</h2>
-        <p>告诉我你的情况，我来帮你规划</p>
-    </div>
     <div class="chat-messages" id="chat-messages">
         <div class="message assistant">
             <div class="message-content">
