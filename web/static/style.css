@@ -144,8 +144,10 @@ a:hover { text-decoration: underline; }
 .feature-card:hover { transform: translateY(-2px); }
 
 .feature-icon {
-    font-size: 2rem;
-    margin-bottom: 12px;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: var(--primary);
 }
 
 .feature-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
@@ -316,4 +318,10 @@ a:hover { text-decoration: underline; }
     .hero { padding: 48px 0 32px; }
     .features { grid-template-columns: 1fr; }
     .message-content { max-width: 90%; }
+    .chat-header h2 { font-size: 1.3rem; }
+    .chat-header { padding: 12px 0 8px; }
+    .chat-input { padding: 10px 0; }
+    .chat-input button { padding: 10px 16px; font-size: 0.9rem; }
+    .message-content { padding: 10px 14px; font-size: 0.9rem; }
+    .container { padding: 0 12px; }
 }

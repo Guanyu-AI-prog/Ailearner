@@ -169,7 +169,7 @@ async def start_evaluation(state: SessionState, stream: bool = True):
     state.evaluation_phase = 0
     state.evaluation_started = True
     q = config.EVALUATION_FIRST_QUESTION
-    reply = f"## ? 入门评估\n\n很高兴你想了解 AI！我先问你几个问题，帮你判断最适合的方向。\n\n**{q['question']}**\n\n"
+    reply = f"## 入门评估\n\n很高兴你想了解 AI！我先问你几个问题，帮你判断最适合的方向。\n\n**{q['question']}**\n\n"
     for i, opt in enumerate(q["options"], 1):
         reply += f"{i}. {opt}\n"
     reply += "\n请直接回答或选择对应的数字告诉我 ~"
@@ -204,7 +204,7 @@ async def continue_evaluation(state: SessionState, message: str, stream: bool = 
         state.evaluation_phase = 1
 
         if state.evaluation_path == "use":
-            reply = "## ? 用 AI 场景选择\n\n你在什么场景需要 AI 帮忙？选一个，我直接给你现成的 prompt 模板：\n\n"
+            reply = "## 用 AI 场景选择\n\n你在什么场景需要 AI 帮忙？选一个，我直接给你现成的 prompt 模板：\n\n"
             for i, s in enumerate(config.USE_AI_SCENARIOS, 1):
                 reply += f"{i}. {s['name']}\n"
             reply += "\n告诉我编号或场景名称就行 ~"
@@ -258,9 +258,9 @@ def _render_prompt_template(scenario: dict) -> str:
         f"  - `{{{k}}}`：{' / '.join(v)}" if isinstance(v, list) else f"  - `{{{k}}}`：{v}"
         for k, v in scenario["parameters"].items()
     )
-    return f"""## ✅ 你的专属 Prompt 模板
+    return f"""## 你的专属 Prompt 模板
 
-### ? 场景：{scenario['name']}
+### 场景：{scenario['name']}
 
 复制以下模板，把用 `{{}}` 标记的参数替换成你的内容就行：
 
@@ -272,19 +272,19 @@ def _render_prompt_template(scenario: dict) -> str:
 
 ---
 
-### ? 参数说明
+### 参数说明
 
 {params_text}
 
 ---
 
-### ? 使用建议
+### 使用建议
 
 {scenario['advice']}
 
 ---
 
-? **提示**：把这个模板收藏起来，每次用到直接复制，填上具体内容就能用。
+**提示**：把这个模板收藏起来，每次用到直接复制，填上具体内容就能用。
 """
 
 
@@ -342,7 +342,7 @@ async def generate_report(state: SessionState) -> str:
     }
     path = steps.get(level, steps["L2 入门"])
 
-    report = f"""## ? 评估结论
+    report = f"""## 评估结论
 
 **建议**：{should}
 
@@ -350,19 +350,19 @@ async def generate_report(state: SessionState) -> str:
 
 ---
 
-## ? 推荐水平
+## 推荐水平
 
 **{level}**
 
 ---
 
-## ? 推荐方向
+## 推荐方向
 
 **{direction_name}**
 
 ---
 
-## ? 学习路径概要
+## 学习路径概要
 
 """
     for i, step in enumerate(path, 1):
@@ -371,20 +371,20 @@ async def generate_report(state: SessionState) -> str:
     report += f"""
 ---
 
-## ? 下一步行动
+## 下一步行动
 
 **{path[0] if path else '开始探索 AI'}**
 
 ---
 
-## ? 信心指数
+## 信心指数
 
 0.85
 """
 
     if level in ("L3 进阶", "L4 专业") and bg != "计算机/IT 相关":
         report += "\n---\n"
-        report += "## ⚠️ 诚实提醒\n\n"
+        report += "## 诚实提醒\n\n"
         report += "达到L3/L4水平需要长期投入，且不保证找到对口工作。\n"
         report += "学历和行业经验是就业门槛，AI技能是加分项。\n"
         report += "建议先从L2入门开始，在现有工作中找到AI应用场景，\n"
