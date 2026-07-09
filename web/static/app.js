@@ -147,7 +147,10 @@ function renderMarkdown(text) {
     // Images
     text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%">');
     // Links
-    text = text.replace(/\[([^\]]*)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    text = text.replace(/\[([^\]]*)\]\(([^)]+)\)/g, function(match, linkText, url) {
+        if (!/^https?:\/\//i.test(url)) return match;
+        return '<a href="' + url + '" target="_blank" rel="noopener">' + linkText + '</a>';
+    });
 
     // Headers
     text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');

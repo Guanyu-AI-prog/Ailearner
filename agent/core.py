@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from openai import AsyncOpenAI
 from config import config
 from agent.schemas import Message, SessionState
-from agent.prompts import SYSTEM_PROMPT, REPORT_PROMPT
+from agent.prompts import SYSTEM_PROMPT
 from agent.tools import TOOL_DEFINITIONS, execute_tool
 from knowledge.retriever import retrieve_knowledge
 
@@ -63,10 +63,6 @@ def is_evaluation_in_progress(state: SessionState) -> bool:
     return state.evaluation_started and not state.evaluation_done
 
 
-def is_first_interaction(state: SessionState) -> bool:
-    return len(state.messages) <= 1
-
-
 def should_start_evaluation(message: str) -> bool:
     triggers = ["评估", "帮我看看", "学AI", "入门", "适不适合", "值不值得", "从哪开始",
                  "方向", "规划", "学习路径", "零基础", "该怎么学"]
@@ -83,8 +79,10 @@ async def build_context(state: SessionState, user_message: str) -> str:
         return ""
     context = "以下是从知识库中找到的相关信息：\n\n"
     for doc, metadata in relevant:
-        context += f"---\n来源：{metadata.get('title', '未知')} | {metadata.get('type', '')}\n"
-        context += f"水平：{metadata.get('level', '')} | 方向：{metadata.get('direction', '')}\n"
+        tags = ", ".join(metadata.get("tags", []))
+        context += f"---\n来源：{metadata.get('title', '未知')}\n"
+        if tags:
+            context += f"标签：{tags}\n"
         context += f"{doc}\n\n"
     context += "请基于以上信息回答用户问题。如果信息不够，可以告诉用户你需要搜索。"
     return context
@@ -117,31 +115,47 @@ async def normal_chat(state: SessionState, message: str, stream: bool = True):
 
     if stream:
         full_content = ""
+        tool_calls_buffer = []
         async for chunk in generate_stream(msgs, tools=TOOL_DEFINITIONS):
             if chunk["type"] == "content":
                 full_content += chunk["text"]
                 yield {"type": "content", "text": chunk["text"]}
             elif chunk["type"] == "tool_call":
-                yield {"type": "status", "text": f"\n\n> 正在调用工具：{chunk['name']}..."}
-                result = await execute_tool(chunk["name"], chunk["arguments"])
-                msgs.append({"role": "assistant", "content": None, "tool_calls": [
-                    {"id": "call_1", "type": "function", "function": {"name": chunk["name"], "arguments": chunk["arguments"]}}
-                ]})
-                msgs.append({"role": "tool", "tool_call_id": "call_1", "content": result})
-                yield {"type": "status", "text": f"> 工具执行完成，正在生成回复...\n\n"}
-                async for chunk2 in generate_stream(msgs):
-                    if chunk2["type"] == "content":
-                        full_content += chunk2["text"]
-                        yield chunk2
+                tool_calls_buffer.append(chunk)
+
+        if tool_calls_buffer:
+            assistant_tool_calls = []
+            tool_results = []
+            for tc in tool_calls_buffer:
+                tc_id = f"call_{tc['name']}"
+                assistant_tool_calls.append({
+                    "id": tc_id, "type": "function",
+                    "function": {"name": tc["name"], "arguments": tc["arguments"]}
+                })
+                yield {"type": "status", "text": f"\n\n> 正在调用工具：{tc['name']}..."}
+                result = await execute_tool(tc["name"], tc["arguments"])
+                tool_results.append({"tool_call_id": tc_id, "content": result})
+                yield {"type": "status", "text": f"> 工具 {tc['name']} 执行完成\n\n"}
+
+            msgs.append({"role": "assistant", "content": None, "tool_calls": assistant_tool_calls})
+            for tr in tool_results:
+                msgs.append({"role": "tool", **tr})
+
+            yield {"type": "status", "text": "> 正在生成回复...\n\n"}
+            async for chunk2 in generate_stream(msgs):
+                if chunk2["type"] == "content":
+                    full_content += chunk2["text"]
+                    yield chunk2
+
         state.messages.append(Message(role="assistant", content=full_content))
     else:
         response = await ask_llm(msgs, tools=TOOL_DEFINITIONS)
         msg = response.choices[0].message
         if msg.tool_calls:
+            assistant_tool_calls = [tc.model_dump() for tc in msg.tool_calls]
+            msgs.append({"role": "assistant", "content": None, "tool_calls": assistant_tool_calls})
             for tc in msg.tool_calls:
-                fn = tc.function
-                result = await execute_tool(fn.name, fn.arguments)
-                msgs.append({"role": "assistant", "content": None, "tool_calls": [tc.model_dump()]})
+                result = await execute_tool(tc.function.name, tc.function.arguments)
                 msgs.append({"role": "tool", "tool_call_id": tc.id, "content": result})
             response = await ask_llm(msgs)
             content = response.choices[0].message.content or ""

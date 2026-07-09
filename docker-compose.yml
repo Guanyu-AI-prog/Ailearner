@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  ailearner:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ailearner.db:/app/ailearner.db
+      - ./knowledge/data:/app/knowledge/data
+    env_file:
+      - .env
+    restart: unless-stopped
