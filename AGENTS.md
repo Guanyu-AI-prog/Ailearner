@@ -47,3 +47,15 @@
 - **#6** `db.py:update_session` 加列名白名单 `_ALLOWED_COLS`
 - **#8** `app.js` 链接渲染加 `^https?://` 协议白名单防 XSS
 - **#10** `.dockerignore` 加 `.env`
+
+## 2026-07-10: 代码质量修复（10 项）
+- **#1** `core.py:321-323` 修复级别判断 bug：`"L3","L4"` → `"L3 进阶","L4 专业"`，数学/编程零基础的降级兜底现在能正确生效
+- **#3** `core.py:130` 修复 tool call ID：使用 LLM 返回的真实 ID（`tc["id"]`），不再伪造
+- **#5** `app.js:133` 修复 XSS：`innerHTML` → `document.createElement` + `textContent`
+- **#6** 输入长度限制 + 频率限制：`ChatRequest.message` 加 `max_length=2000`，`main.py` 加 per-session 速率限制（60s 内最多 20 次）
+- **#7** `db.py` 重构连接管理：`_get_conn()` → `get_conn()` context manager，所有函数统一用 `with get_conn()`
+- **#8** `main.py` `print()` → `logging`，配置 `basicConfig` 带时间戳和级别
+- **#9** Docker 优化：`Dockerfile` 加非 root 用户 + healthcheck；`docker-compose.yml` 移除废弃的 `version: '3.8'`
+- **#10** `db.py:close_db` 复用 `get_conn()` context manager，不再单独建连接
+- **#11** 删除遗留的 `sessions.json`（SQLite 迁移后已无用）
+- **#12** `agent/tools.py` `import re` 从函数体移到模块顶部

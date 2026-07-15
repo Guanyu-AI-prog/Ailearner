@@ -3,26 +3,32 @@
 {% block head %}
 <style>
     .site-header, .site-footer { display: none; }
-    .chat-container { height: 100vh; }
 </style>
 {% endblock %}
 {% block content %}
 <div class="chat-container">
+    <div class="chat-header">
+        <div class="chat-header-avatar">A</div>
+        <div class="chat-header-info">
+            <h2>AI 学习引路人</h2>
+            <p>在线 · 随时为你解答</p>
+        </div>
+    </div>
     <div class="chat-messages" id="chat-messages">
         <div class="message assistant">
             <div class="message-content">
-                <p>你好！我是 AI 学习引路人</p>
-                <p>想了解一下 AI 学习？你可以：</p>
+                <p>你好！我是 <strong>AI 学习引路人</strong></p>
+                <p>想了解 AI 学习？你可以：</p>
                 <ul>
-                    <li>直接说 <strong>"帮我评估"</strong>，我通过几个问题帮你判断方向</li>
-                    <li>或者直接问任何 AI 学习相关的问题</li>
+                    <li>直接说 <strong>"帮我评估"</strong>——我通过几个问题帮你判断方向</li>
+                    <li>或直接问任何 AI 学习相关的问题</li>
                 </ul>
                 <p>从哪里开始都可以，我们聊聊？</p>
             </div>
         </div>
     </div>
     <div class="chat-input">
-        <textarea id="user-input" rows="2" placeholder="输入你的问题..." onkeydown="handleKeyDown(event)"></textarea>
+        <textarea id="user-input" rows="1" placeholder="输入你的问题..." onkeydown="handleKeyDown(event)"></textarea>
         <button id="send-btn" onclick="sendMessage()">发送</button>
     </div>
 </div>

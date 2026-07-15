@@ -12,6 +12,9 @@ class Config:
     LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.siliconflow.cn/v1")
     LLM_MODEL = os.getenv("LLM_MODEL", "deepseek-ai/DeepSeek-V4-Flash")
 
+    FEISHU_APP_ID = os.getenv("FEISHU_APP_ID", "")
+    FEISHU_APP_SECRET = os.getenv("FEISHU_APP_SECRET", "")
+
     KNOWLEDGE_DIR = ROOT_DIR / os.getenv("KNOWLEDGE_DIR", "knowledge/data")
 
     APP_HOST = os.getenv("APP_HOST", "0.0.0.0")
@@ -204,6 +207,31 @@ class Config:
                 "existing_code": "已有代码（可选）"
             },
             "advice": "零基础也能用，让 AI 写代码然后你复制运行就行。"
+        }
+    ]
+
+    USE_AI_QUESTIONS = [
+        {
+            "id": "usage_time",
+            "question": "你每天大概花多少时间在AI上？",
+            "options": [
+                "偶尔试一下",
+                "每天用一点",
+                "经常用",
+                "重度依赖"
+            ]
+        },
+        {
+            "id": "current_tools",
+            "question": "你现在用什么工具？",
+            "options": [
+                "ChatGPT",
+                "文心一言",
+                "通义千问",
+                "Kimi",
+                "其他",
+                "没用过"
+            ]
         }
     ]
 

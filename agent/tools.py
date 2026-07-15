@@ -1,5 +1,6 @@
 import asyncio
 import json
+import re
 from typing import Any
 
 import httpx
@@ -92,7 +93,6 @@ async def search_web(query: str) -> str:
             text = resp.text
 
         results = []
-        import re
         blocks = re.findall(r'<li class="b_algo"[^>]*>.*?</li>', text, re.DOTALL)
         for block in blocks:
             h2 = re.search(r'<h2[^>]*><a[^>]*href="(https?://[^"]+)"[^>]*>(.*?)</a></h2>', block, re.DOTALL)
@@ -243,5 +243,9 @@ async def execute_tool(name: str, arguments: str) -> str:
         if name == "search_web":
             return await func(**args)
         return func(**args)
+    except json.JSONDecodeError as e:
+        return f"工具参数解析失败：{str(e)}"
     except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"工具 {name} 执行出错：{e}", exc_info=True)
         return f"工具执行出错：{str(e)}"

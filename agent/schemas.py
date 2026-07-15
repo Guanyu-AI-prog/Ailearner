@@ -1,15 +1,15 @@
-from pydantic import BaseModel
-from typing import Dict, List
+from pydantic import BaseModel, Field
+from typing import Dict, List, Optional
 
 
 class Message(BaseModel):
     role: str
-    content: str
+    content: Optional[str] = None
 
 
 class ChatRequest(BaseModel):
     session_id: str
-    message: str
+    message: str = Field(..., min_length=1, max_length=2000)
 
 
 class SessionState(BaseModel):

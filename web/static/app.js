@@ -4,7 +4,8 @@ const chatMessages = document.getElementById('chat-messages');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 let isStreaming = false;
-let sessionId = Math.random().toString(36).substring(2, 15);
+let sessionId = localStorage.getItem('ailearner_session_id') || Math.random().toString(36).substring(2, 15);
+localStorage.setItem('ailearner_session_id', sessionId);
 let currentAssistantDiv = null;
 let currentStreamContent = '';
 
@@ -20,7 +21,7 @@ function addMessage(role, content) {
     div.className = `message ${role}`;
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
-    contentDiv.innerHTML = marked.parse(content);
+    contentDiv.innerHTML = DOMPurify.sanitize(marked.parse(content));
     div.appendChild(contentDiv);
     chatMessages.appendChild(div);
     scrollToBottom();
@@ -51,7 +52,7 @@ function updateAssistantContent(contentDiv, text, append = false) {
     } else {
         currentStreamContent = text;
     }
-    contentDiv.innerHTML = marked.parse(currentStreamContent);
+    contentDiv.innerHTML = DOMPurify.sanitize(marked.parse(currentStreamContent));
     scrollToBottom();
 }
 
@@ -59,7 +60,7 @@ function finalizeAssistantContent(contentDiv) {
     const typing = contentDiv.querySelector('.typing-indicator');
     if (typing) typing.remove();
     if (currentStreamContent) {
-        contentDiv.innerHTML = marked.parse(currentStreamContent);
+        contentDiv.innerHTML = DOMPurify.sanitize(marked.parse(currentStreamContent));
     }
     currentStreamContent = '';
     isStreaming = false;
@@ -119,7 +120,6 @@ async function sendMessage() {
                         } else if (parsed.type === 'status') {
                             const statusDiv = contentDiv.querySelector('.status-info') || document.createElement('div');
                             statusDiv.className = 'status-info';
-                            statusDiv.style.cssText = 'font-size: 0.85em; color: #6c757d; margin: 8px 0;';
                             statusDiv.textContent = parsed.text.replace(/[*>\n]/g, '').trim();
                             contentDiv.appendChild(statusDiv);
                             scrollToBottom();
@@ -131,7 +131,9 @@ async function sendMessage() {
             }
         }
     } catch (err) {
-        contentDiv.innerHTML = `<p>出错了：${err.message}。请重试。</p>`;
+        const errP = document.createElement('p');
+        errP.textContent = `出错了：${err.message}。请重试。`;
+        contentDiv.appendChild(errP);
     }
 
     finalizeAssistantContent(contentDiv);
