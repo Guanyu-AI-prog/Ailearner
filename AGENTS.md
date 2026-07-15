@@ -59,3 +59,10 @@
 - **#10** `db.py:close_db` 复用 `get_conn()` context manager，不再单独建连接
 - **#11** 删除遗留的 `sessions.json`（SQLite 迁移后已无用）
 - **#12** `agent/tools.py` `import re` 从函数体移到模块顶部
+
+# Git推送规则
+- 远程仓库：git@github.com:Guanyu-AI-prog/code-transfer.git
+- 每次改动后推送到GitHub
+- Github token：***REMOVED***
+
+

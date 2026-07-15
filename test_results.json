@@ -1,0 +1,164 @@
+[
+  {
+    "persona": "Persona A — 职场小白想转行",
+    "description": "文科背景，非技术岗，想转行做AI相关工作，数学/编程零基础",
+    "session_id": "test_325ae97c7ad8",
+    "interactions": [
+      {
+        "round": 1,
+        "user_message": "我想学AI，不知道适不适合，帮我评估一下",
+        "ai_response": "## 入门评估\n\n很高兴你想了解 AI！我先问你几个问题，帮你判断最适合的方向。\n\n**你想「学 AI」还是「用 AI」？**\n\n1. 学 AI：深入技术，理解原理，想自己训练/微调模型\n2. 用 AI：把 AI 当工具提高效率，不想深究底层\n\n请直接回答或选择对应的数字告诉我 ~",
+        "status_msgs": []
+      },
+      {
+        "round": 2,
+        "user_message": "1",
+        "ai_response": "**你学 AI 是为了什么？**\n\n1. 想转行做 AI 相关工作\n2. 想用 AI 提升现在的工作效率\n3. 做学术研究\n4. 纯粹好奇/兴趣\n5. 还没想清楚，先了解看看\n",
+        "status_msgs": []
+      },
+      {
+        "round": 3,
+        "user_message": "1",
+        "ai_response": "**你目前的职业或专业背景是什么？**\n\n1. 计算机/IT 相关\n2. 理工科（非计算机）\n3. 文科/商科/艺术\n4. 学生（请说明年级和专业）\n5. 其他\n",
+        "status_msgs": []
+      },
+      {
+        "round": 4,
+        "user_message": "3",
+        "ai_response": "**你每周大概能投入多少时间学习 AI？**\n\n1. 少于 2 小时\n2. 2-5 小时\n3. 5-10 小时\n4. 10 小时以上\n",
+        "status_msgs": []
+      },
+      {
+        "round": 5,
+        "user_message": "2",
+        "ai_response": "**你目前的数学基础怎么样？**\n\n1. 高中数学水平\n2. 大学学过高等数学/线性代数（还记得一些）\n3. 大学学过高等数学/线性代数（基本忘了）\n4. 数学基础很好，能看懂公式推导\n5. 对数学没信心\n",
+        "status_msgs": []
+      },
+      {
+        "round": 6,
+        "user_message": "5",
+        "ai_response": "**你目前的编程基础怎么样？**\n\n1. 零基础，没写过代码\n2. 能看懂一些 Python 代码，但自己写不了\n3. 会写基本的 Python 代码\n4. 有丰富的编程经验\n",
+        "status_msgs": []
+      },
+      {
+        "round": 7,
+        "user_message": "1",
+        "ai_response": "**你愿意为学习 AI 投入多少预算？**\n\n1. 零成本，只用免费资源\n2. 少量预算（1000 元以内）\n3. 愿意花钱买课/算力（几千到上万）\n4. 公司/学校报销，预算充足\n",
+        "status_msgs": []
+      },
+      {
+        "round": 8,
+        "user_message": "1",
+        "ai_response": "**你对 AI 的哪个方向最感兴趣？**\n\n1. 文字相关（ChatGPT/写作/翻译/NLP）\n2. 图像相关（绘画/设计/视频生成/CV）\n3. 数据分析/预测\n4. 声音相关（语音合成/识别）\n5. AI 产品设计/项目管理\n6. 还没特定方向，想全面了解\n",
+        "status_msgs": []
+      },
+      {
+        "round": 9,
+        "user_message": "6",
+        "ai_response": "## 评估结论\n\n**建议**：建议学\n\n**理由**：根据你的目标（1）、背景（3）和投入时间（2），建议系统性学习 AI，目标是实际应用。\n\n---\n\n## 推荐水平\n\n**L2 入门**\n\n---\n\n## 推荐方向\n\n**通用入门**\n\n---\n\n## 学习路径概要\n\n1. 学习 AI 核心概念（过拟合、训练、推理等）\n2. 掌握提示词工程\n3. 用 AI 提效当前工作\n4. 了解一个垂直方向的工具链\n\n---\n\n## 下一步行动\n\n**学习 AI 核心概念（过拟合、训练、推理等）**\n\n---\n\n## 信心指数\n\n0.85\n",
+        "status_msgs": []
+      }
+    ],
+    "final_state": {
+      "session_id": "test_325ae97c7ad8",
+      "evaluation_done": true,
+      "evaluation_started": true,
+      "evaluation_phase": 7,
+      "evaluation_report": "## 评估结论\n\n**建议**：建议学\n\n**理由**：根据你的目标（1）、背景（3）和投入时间（2），建议系统性学习 AI，目标是实际应用。\n\n---\n\n## 推荐水平\n\n**L2 入门**\n\n---\n\n## 推荐方向\n\n**通用入门**\n\n---\n\n## 学习路径概要\n\n1. 学习 AI 核心概念（过拟合、训练、推理等）\n2. 掌握提示词工程\n3. 用 AI 提效当前工作\n4. 了解一个垂直方..."
+    }
+  },
+  {
+    "persona": "Persona B — 大学生好奇AI",
+    "description": "大三计算机专业学生，对AI感兴趣，有一定编程基础",
+    "session_id": "test_3a49c23c03e3",
+    "interactions": [
+      {
+        "round": 1,
+        "user_message": "你好，我想了解一下学AI的路径",
+        "ai_response": "你好呀！很高兴能帮你理清思路 😊\n\n先问你一个关键问题，这决定了后面的路怎么走：\n\n**你是想「学 AI」还是「用 AI」？**\n\n- **想「用 AI」** → 比如用 ChatGPT、豆包、Midjourney 等工具帮你写东西、画图、做表格、处理数据。这个门槛最低，有手就能用。\n- **想「学 AI」** → 想了解背后的原理、会调模型、甚至自己写代码做项目。这条路需要投入更多时间。\n\n绝大多数人其实**不需要「学」AI，只需要「用」好AI就够了**。你先想一下，你是哪种情况？",
+        "status_msgs": []
+      },
+      {
+        "round": 2,
+        "user_message": "1",
+        "ai_response": "好的，选1，那你是想深入「学 AI」对吧？🧠\n\n再往下问几个问题，帮你找到最适合的方向：\n\n1️⃣ **学 AI 是为了什么？**\n   - 提升工作效率/辅助主业？\n   - 转行找 AI 相关的工作？\n   - 纯粹兴趣/研究？\n\n2️⃣ **你目前是什么背景？**（专业/职业/学历）\n\n3️⃣ **每周大概能投入多少时间？**\n\n4️⃣ **数学和编程基础怎么样？**\n\n不用全答，先说说最关键的——**你是啥背景，想达到什么目标？** 这样我能给你最接地气的建议 👇",
+        "status_msgs": []
+      },
+      {
+        "round": 3,
+        "user_message": "5",
+        "ai_response": "明白，选5，那你是想「用 AI」来提效，不打算深入学原理和技术细节。\n\n这样的话事情简单多了。再问一个关键问题：\n\n**你平时主要做什么工作？或者想用 AI 帮你解决什么问题？**\n\n比如：\n- 写文案、做PPT、写周报\n- 处理数据、整理表格\n- 画图、做设计\n- 编程写代码\n- 做视频、做自媒体\n\n告诉我你的场景，我直接给你推荐对应的工具 + 现成能用的提示词（Prompt），今天就能上手用 🚀",
+        "status_msgs": []
+      },
+      {
+        "round": 4,
+        "user_message": "4",
+        "ai_response": "好，选4，你想用AI来编程写代码。那这个方向非常适合「用AI提效」，不需要学AI原理，直接用工具就行。\n\n**我的建议：直接上手编程助手类工具，零门槛。**\n\n给你三个推荐，按推荐顺序：\n\n**① GitHub Copilot（最推荐）**  \n- 装在你用的IDE（比如VSCode）里，写代码时自动补全\n- 免费版每月2000次补全，够初学者用\n- 学生可以免费申请\n\n**② Cursor**  \n- 一个内置AI的代码编辑器，不用配置，开箱即用\n- 免费版够用，直接跟AI对话写代码\n\n**③ Claude / ChatGPT**  \n- 直接把你的需求扔给AI：\"用Python写一个爬取网页标题的脚本\"\n- 复制粘贴就能用\n\n**你现在用什么编程语言？写什么类型的代码？** 告诉我，我给你一个现成的Prompt模板，复制过去就能用 👇",
+        "status_msgs": []
+      },
+      {
+        "round": 5,
+        "user_message": "3",
+        "ai_response": "好的，选3，你想用AI辅助写代码，而且是Python。\n\n那太简单了，我给你一个**今天就能用的现成Prompt模板**，复制到ChatGPT、Claude、豆包、Kimi里都行：\n\n---\n\n**通用写代码模板：**\n```\n你是一个Python专家。我需要你帮我写一段代码：\n1. 语言：Python\n2. 功能：[在这里描述你想做什么，越具体越好]\n3. 要求：代码要加注释，初学者能看懂，最好给个使用示例\n```\n\n**举个实际例子，你可以直接复制用：**\n```\n你是一个Python专家。我需要你帮我写一个脚本：\n功能：批量重命名一个文件夹里的所有图片文件，按\"日期_序号.jpg\"的格式命名\n要求：代码加中文注释，用os和glob库就行，别用太高级的写法\n```\n\n---\n\n**另外给你三个免费学习资源，帮你更快上手：**\n\n- **免费教程：** B站搜\"Python入门 2024\"→ 找播放量最高的那个就行\n- **免费练习：** 安装Cursor编辑器（免费），边写边问AI\n- **免费AI助手：** Claude（claude.ai）写Python比ChatGPT更稳\n\n你现在想写什么Python脚本？告诉我，我直接帮你写个Prompt，今天就能跑起来 🚀",
+        "status_msgs": []
+      },
+      {
+        "round": 6,
+        "user_message": "2",
+        "ai_response": "选2，那你是想「用 AI」来**提升工作效率**，不深学技术。\n\n这样的话，我给你推荐一个**零成本、零门槛**的方案，今天就能让你的微信里多一个 AI 助手，自动帮你查资料、写文案、翻译、回消息 👇\n\n---\n\n**20分钟极简方案：**\n\n**① 免费领一台云电脑**（阿里云无影，新用户送1个月，4核8G）\n- 用手机/旧电脑/平板就能远程连\n- 创建时选**Hermes镜像**，预装好环境，开机即用\n\n**② 免费拿 API Key**\n- 打开 [MiMo平台](https://platform.xiaomimimo.com?ref=A4BGLM) 注册，邀请码填 **A4BGLM**\n- 双方各得 ¥10 体验金（约7000万Tokens，个人用很久）\n\n**③ 配置对接微信**（10分钟）\n- 在云电脑里跑两行命令，手机扫码就完成\n- 之后你的微信就能和AI对话、设自动回复\n\n---\n\n完成后，就算你手机关机，AI 也能24小时在线帮你处理消息。**全程不装软件、不花一分钱。**\n\n想试试吗？要我把更详细的步骤发你？ 😊",
+        "status_msgs": []
+      },
+      {
+        "round": 7,
+        "user_message": "3",
+        "ai_response": "明白了，选3，你是想用AI**辅助写代码**。\n\n好，之前我给过你Prompt模板了，现在给你**三个最实用的Python写代码场景 + 即用Prompt**，今天就能跑起来：\n\n---\n\n**场景一：数据分析**\n```\n我用Python写一个从Excel读取销售数据、按月份汇总销售额、生成折线图的脚本。用pandas和matplotlib，代码要加中文注释。\n```\n\n**场景二：自动化办公**\n```\n写一个Python脚本，遍历指定文件夹里所有Word文档，把每个文档的第一段内容提取出来，保存到一个新的Excel文件里。用python-docx和openpyxl。\n```\n\n**场景三：爬虫**\n```\n用Python写一个爬虫，抓取某个新闻网站首页的所有文章标题和链接，保存到CSV文件。用requests和BeautifulSoup，加异常处理。\n```\n\n---\n\n**三个免费工具，帮你省时间：**\n\n1. **Cursor编辑器**（免费）→ 边写边问AI，自动补全\n2. **Google Colab**（免费）→ 浏览器就能跑Python，不用装环境\n3. **Claude**（claude.ai）→ 写Python代码比ChatGPT更稳\n\n你现在手头有没有具体想做的Python项目？告诉我需求，我直接帮你写个精准Prompt 🚀",
+        "status_msgs": []
+      },
+      {
+        "round": 8,
+        "user_message": "3",
+        "ai_response": "好的，看起来你一直在确认选择。让我帮你理清楚：\n\n**你选了三次「3」——用AI辅助写代码（Python方向）。**\n\n那我直接给你一个**最精简的上手路径**，三步走，今天就能跑起来：\n\n---\n\n**第一步：装工具（10分钟）**\n- 下载 **Cursor** 编辑器（cursor.com，免费）\n- 它内置AI，不用配置，打开就能对话\n\n**第二步：写第一个脚本（5分钟）**\n在Cursor里按 `Ctrl+K`，输入：\n```\n用Python写一个计算器，支持加减乘除，运行后让用户输入两个数字和运算符，输出结果。代码加中文注释。\n```\n\n**第三步：运行看结果**\n- 按 `Ctrl+Enter` 运行\n- 有问题直接问AI改\n\n---\n\n**你以前写过Python吗？写过的话，告诉我你现在最想自动化的一个任务，我直接帮你定做一个Prompt。**",
+        "status_msgs": []
+      },
+      {
+        "round": 9,
+        "user_message": "1",
+        "ai_response": "好，选1，你是想**用AI提升工作效率**。这是最实用的方向，也是门槛最低的。\n\n**你的工作具体是什么？** 比如：\n\n- 写周报/写方案/写邮件\n- 做PPT/做Excel表格\n- 整理文档/翻译\n- 做数据汇总/分析\n\n告诉我你每天最烦的一个重复性任务，我直接给你一个Prompt模板，复制到任何AI工具里就能用，**今天就能省出30分钟** 🚀",
+        "status_msgs": []
+      }
+    ],
+    "final_state": {
+      "session_id": "test_3a49c23c03e3",
+      "evaluation_done": false,
+      "evaluation_started": false,
+      "evaluation_phase": 0,
+      "evaluation_report": ""
+    }
+  },
+  {
+    "persona": "Persona C — 在职想用AI提效",
+    "description": "产品经理，在职，不想学底层，只想把AI当工具用",
+    "session_id": "test_2fe53bc5d3d8",
+    "interactions": [
+      {
+        "round": 1,
+        "user_message": "我平时工作需要写文档、做汇报，有没有AI工具能帮我提效？",
+        "ai_response": "你问的是写文档和做汇报——这跟编程不是一回事。知识库里的内容都是编程助手，不适合你。我帮你搜一下真正能帮上忙的工具。\n\n出错了：'id'。请检查 LLM API 配置是否正确。",
+        "status_msgs": []
+      },
+      {
+        "round": 2,
+        "user_message": "1",
+        "ai_response": "好问题！你这属于典型的 **「用AI」**，不是「学AI」——这就简单了，直接上工具。\n\n先问两个细节，推荐更精准：\n\n1. **你写文档偏什么类型？**（周报/方案/技术文档/公文？）\n2. **做汇报是用PPT多，还是Word文档汇报多？**\n\n我先给你几个**零成本起步**的推荐：\n\n**📝 写文档通用：**\n- **Kimi（kimi.moonshot.cn）**：国产免费，长文档处理强，适合写方案、总结、改稿\n- **Claude（claude.ai）**：英文写作/逻辑性内容最稳，免费版够日常用\n- **DeepSeek（chat.deepseek.com）**：国产免费，代码和技术文档写得好\n\n**📊 做汇报/PPT：**\n- **Gamma（gamma.app）**：AI生成PPT，免费版够用，输入主题就出大纲+设计\n- **讯飞智文**：输入主题直接生成PPT，免费\n\n你先告诉我具体场景，我可以给你**直接能复制粘贴的prompt模板**，帮你把效率拉满。",
+        "status_msgs": []
+      }
+    ],
+    "final_state": {
+      "session_id": "test_2fe53bc5d3d8",
+      "evaluation_done": false,
+      "evaluation_started": false,
+      "evaluation_phase": 0,
+      "evaluation_report": ""
+    }
+  }
+]
