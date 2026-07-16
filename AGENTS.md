@@ -60,6 +60,13 @@
 - **#11** 删除遗留的 `sessions.json`（SQLite 迁移后已无用）
 - **#12** `agent/tools.py` `import re` 从函数体移到模块顶部
 
+## 2026-07-13: 第二期代码审查修复（P1-P4）
+- **P1** `agent/core.py:59` 流式工具调用 yield 增加 `"id": tc_data["id"]`，多工具并发时使用 LLM 真实 ID
+- **P2** 新建 `routes/_common.py`，将 `_save_state` 提取为共享 `save_state`；`routes/chat.py` 和 `routes/evaluation.py` 统一导入，清理私有函数耦合和 stale import
+- **P3** `agent/tools.py:223` 标题占位符 `"??"` → `"##"`
+- **P4** `agent/core.py:460+316` 去掉 `generate_report` 多余 async/await
+- 新建 `CODE_REVIEW_2.md`：第二期审查报告文档
+
 # Git推送规则
 - 远程仓库：git@github.com:Guanyu-AI-prog/code-transfer.git
 - 每次改动后推送到GitHub

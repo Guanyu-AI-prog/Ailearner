@@ -220,7 +220,7 @@ def generate_learning_path(direction: str, current_level: str, target_level: str
         level = "L2"
     steps = paths[level]
     weeks_estimate = len(steps) * 2 * (40 // max(weekly_hours, 1))
-    path_text = f"?? {direction} 学习路径（目标：{target_level}）\n\n"
+    path_text = f"## {direction} 学习路径（目标：{target_level}）\n\n"
     path_text += f"预计需要约 {weeks_estimate} 周（按每周 {weekly_hours} 小时计算）\n\n"
     for i, step in enumerate(steps, 1):
         path_text += f"**第{i}步**：{step}\n"

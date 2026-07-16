@@ -8,7 +8,9 @@ from sse_starlette.sse import EventSourceResponse
 
 from agent.schemas import ChatRequest
 from agent.core import handle_message
-from db import get_or_create_session, save_message, update_session
+from db import get_or_create_session
+
+from routes._common import save_state
 
 logger = logging.getLogger(__name__)
 
@@ -45,20 +47,6 @@ def _check_rate_limit(session_id: str) -> bool:
     return True
 
 
-async def _save_state(state, initial_count):
-    for m in state.messages[initial_count:]:
-        await save_message(state.session_id, m.role, m.content)
-    await update_session(
-        state.session_id,
-        evaluation_started=state.evaluation_started,
-        evaluation_done=state.evaluation_done,
-        evaluation_phase=state.evaluation_phase,
-        evaluation_report=state.evaluation_report,
-        evaluation_path=state.evaluation_path,
-        evaluation_answers=state.evaluation_answers,
-    )
-
-
 @router.post("/api/chat")
 async def chat(request: ChatRequest):
     if not _check_rate_limit(request.session_id):
@@ -82,7 +70,7 @@ async def chat(request: ChatRequest):
             logger.error(f"chat error: {e}\n{traceback.format_exc()}")
             err_msg = f"出错了：{str(e)}。请检查 LLM API 配置是否正确。"
             yield {"data": json.dumps({"type": "content", "text": err_msg}, ensure_ascii=False)}
-        await _save_state(state, initial_count)
+        await save_state(state, initial_count)
         yield {"data": json.dumps({"type": "done", "text": ""}, ensure_ascii=False)}
 
     return EventSourceResponse(event_generator())

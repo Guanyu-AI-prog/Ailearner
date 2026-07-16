@@ -1,13 +1,13 @@
 import json
 import logging
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from sse_starlette.sse import EventSourceResponse
 
 from agent.schemas import ChatRequest
-from agent.core import handle_message, should_start_evaluation
-from db import get_session, get_or_create_session, delete_session, save_message, update_session
-from routes.chat import _save_state
+from agent.core import handle_message
+from db import get_session, get_or_create_session
+from routes._common import save_state
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ async def evaluation_start(request: ChatRequest):
             elif chunk["type"] == "status":
                 yield {"data": json.dumps({"type": "status", "text": chunk["text"]}, ensure_ascii=False)}
         initial_count = 0
-        await _save_state(state, initial_count)
+        await save_state(state, initial_count)
         yield {"data": json.dumps({"type": "done", "text": ""}, ensure_ascii=False)}
 
     return EventSourceResponse(event_generator())
@@ -52,7 +52,7 @@ async def evaluation_answer(request: ChatRequest):
             import traceback
             logger.error(f"evaluation answer error: {e}\n{traceback.format_exc()}")
             yield {"data": json.dumps({"type": "content", "text": f"出错了：{str(e)}"}, ensure_ascii=False)}
-        await _save_state(state, initial_count)
+        await save_state(state, initial_count)
         yield {"data": json.dumps({"type": "done", "text": ""}, ensure_ascii=False)}
 
     return EventSourceResponse(event_generator())

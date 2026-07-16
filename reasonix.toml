@@ -1,0 +1,18 @@
+default_model = "deepseek-flash"
+
+[[providers]]
+name        = "deepseek-flash"
+kind        = "openai"
+base_url    = "https://api.siliconflow.cn/v1"
+model       = "deepseek-ai/DeepSeek-V4-Flash"
+api_key_env = "SILICONFLOW_API_KEY"
+
+[[providers]]
+name        = "deepseek-pro"
+kind        = "openai"
+base_url    = "https://api.siliconflow.cn/v1"
+model       = "deepseek-ai/DeepSeek-V4-Flash"
+api_key_env = "SILICONFLOW_API_KEY"
+
+[permissions]
+allow = ["Bash(cd /home/admin/ailearner && python3 -c \"\nwith open('knowledge/retriever.py', 'r') as f:\n    content = f.read()\n# show lines 58-65\nlines = content.split('\\n')\nfor i, line in enumerate(lines[57:65], start=58):\n    print(f'{i}: {line}')\n\")", "Edit", "Bash(python3 -c:*)", "Bash(sed -n:*)", "Bash(grep -n \"await generate_report\" /home/admin/ailearner/agent/core.py; echo \"Exit: $?\")", "Bash(awk NR==67{printf \"%d: \\\"%s\\\"\\n\", NR, $0}:*)", "Bash(awk NR==18{printf \"%d: \\\"%s\\\"\\n\", NR, $0}:*)", "Bash(awk NR==32{printf \"%d: \\\"%s\\\"\\n\", NR, $0}:*)", "Bash(cd /home/admin/ailearner && python3 -c \"\nimport sys\n# Test that the import path works\nsys.path.insert(0, '.')\nfrom routes._common import save_state\nprint('save_state importable:', save_state)\n\")"]

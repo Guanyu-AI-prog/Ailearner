@@ -56,7 +56,7 @@ async def generate_stream(messages: List[Dict], tools: Optional[List] = None):
                     tool_calls_buffer[idx]["arguments"] += tc.function.arguments
     if tool_calls_buffer:
         for tc_data in tool_calls_buffer.values():
-            yield {"type": "tool_call", "name": tc_data["name"], "arguments": tc_data["arguments"]}
+            yield {"type": "tool_call", "name": tc_data["name"], "arguments": tc_data["arguments"], "id": tc_data["id"]}
 
 
 def is_evaluation_in_progress(state: SessionState) -> bool:
@@ -313,7 +313,7 @@ async def continue_evaluation(state: SessionState, message: str, stream: bool = 
 
     next_idx = q_idx + 1
     if next_idx >= len(config.LEARN_AI_QUESTIONS):
-        report = await generate_report(state)
+        report = generate_report(state)
         state.evaluation_done = True
         state.evaluation_report = report
         state.messages.append(Message(role="assistant", content=report))
@@ -457,7 +457,7 @@ LEVEL_ABILITY = {
     "L4 专业": {"ability": "能做AI系统架构设计，需要持续学习", "salary": "10K+"},
 }
 
-async def generate_report(state: SessionState) -> str:
+def generate_report(state: SessionState) -> str:
     answers = state.evaluation_answers
 
     # Resolve raw numbers to full option text for display
