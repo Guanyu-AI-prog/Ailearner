@@ -8,7 +8,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -17,6 +17,7 @@ from config import config
 from db import init_db, close_db
 from knowledge.retriever import is_knowledge_ready
 from agent.feishu import handle_event as handle_feishu_event
+from auth import verify_auth
 
 
 @asynccontextmanager
@@ -45,22 +46,22 @@ from routes.chat import router as chat_router
 from routes.evaluation import router as evaluation_router
 from routes.persona import router as persona_router
 
-app.include_router(chat_router)
-app.include_router(evaluation_router)
-app.include_router(persona_router)
+app.include_router(chat_router, dependencies=[Depends(verify_auth)])
+app.include_router(evaluation_router, dependencies=[Depends(verify_auth)])
+app.include_router(persona_router, dependencies=[Depends(verify_auth)])
 
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 
 @app.get("/chat", response_class=HTMLResponse)
 async def chat_page(request: Request):
-    return templates.TemplateResponse("chat.html", {"request": request})
+    return templates.TemplateResponse(request, "chat.html")
 
 
-@app.get("/api/session/{session_id}/state")
+@app.get("/api/session/{session_id}/state", dependencies=[Depends(verify_auth)])
 async def get_session_state(session_id: str):
     from db import get_session
     data = await get_session(session_id)
@@ -76,7 +77,7 @@ async def get_session_state(session_id: str):
     }
 
 
-@app.post("/api/session/{session_id}/reset")
+@app.post("/api/session/{session_id}/reset", dependencies=[Depends(verify_auth)])
 async def reset_session(session_id: str):
     from db import delete_session
     await delete_session(session_id)

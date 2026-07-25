@@ -1,16 +1,17 @@
+"""聊天路由：普通对话 + SSE 输出。"""
+
 import json
 import logging
 import time
 from collections import OrderedDict
 
 from fastapi import APIRouter
-from sse_starlette.sse import EventSourceResponse
 
 from agent.schemas import ChatRequest
-from agent.core import handle_message
+from agent.stream_bus import StreamBus
+from agent.orchestrator import handle_message
 from db import get_or_create_session
-
-from routes._common import save_state
+from routes._common import sse_response
 
 logger = logging.getLogger(__name__)
 
@@ -50,27 +51,19 @@ def _check_rate_limit(session_id: str) -> bool:
 @router.post("/api/chat")
 async def chat(request: ChatRequest):
     if not _check_rate_limit(request.session_id):
-        async def rate_limited():
-            yield {"data": json.dumps({"type": "content", "text": "请求太频繁，请稍后再试。"}, ensure_ascii=False)}
-            yield {"data": json.dumps({"type": "done", "text": ""}, ensure_ascii=False)}
-        return EventSourceResponse(rate_limited())
+        async def rate_limited_handler(bus: StreamBus):
+            await bus.emit_content("请求太频繁，请稍后再试。")
+            await bus.emit_done()
+
+        state = await get_or_create_session(request.session_id)
+        return await sse_response(rate_limited_handler, state, len(state.messages))
 
     state = await get_or_create_session(request.session_id)
 
-    async def event_generator():
-        initial_count = len(state.messages)
-        try:
-            async for chunk in handle_message(state, request.message, stream=True):
-                if chunk["type"] == "content":
-                    yield {"data": json.dumps({"type": "content", "text": chunk["text"]}, ensure_ascii=False)}
-                elif chunk["type"] == "status":
-                    yield {"data": json.dumps({"type": "status", "text": chunk["text"]}, ensure_ascii=False)}
-        except Exception as e:
-            import traceback
-            logger.error(f"chat error: {e}\n{traceback.format_exc()}")
-            err_msg = f"出错了：{str(e)}。请检查 LLM API 配置是否正确。"
-            yield {"data": json.dumps({"type": "content", "text": err_msg}, ensure_ascii=False)}
-        await save_state(state, initial_count)
-        yield {"data": json.dumps({"type": "done", "text": ""}, ensure_ascii=False)}
+    async def handler(bus: StreamBus):
+        async for chunk in handle_message(state, request.message, stream=True):
+            if chunk["type"] in ("content", "status"):
+                await bus.emit(chunk["type"], {"text": chunk["text"]})
+        await bus.emit_done()
 
-    return EventSourceResponse(event_generator())
+    return await sse_response(handler, state, len(state.messages))

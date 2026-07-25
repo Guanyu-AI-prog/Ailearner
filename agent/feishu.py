@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional
 import httpx
 
 from config import config
-from agent.core import handle_message
+from agent.orchestrator import handle_message
 from db import get_or_create_session, save_message, update_session
 
 

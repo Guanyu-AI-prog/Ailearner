@@ -2,12 +2,22 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# 依赖层（缓存友好）
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# 应用代码
+COPY main.py ./
+COPY agent/ agent/
+COPY config/ config/
+COPY routes/ routes/
+COPY knowledge/ knowledge/
+COPY web/ web/
+COPY db.py auth.py ./
 
-RUN useradd --create-home appuser
+# 不 COPY: .env, .git, __pycache__, *.db, tests/
+
+RUN useradd --create-home appuser && chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8000

@@ -1,3 +1,4 @@
+import asyncio
 import json
 import aiosqlite
 from pathlib import Path
@@ -6,6 +7,7 @@ from typing import Optional
 DB_PATH = Path(__file__).parent / "ailearner.db"
 
 _conn: Optional[aiosqlite.Connection] = None
+_write_lock = asyncio.Lock()
 
 
 async def _get_conn() -> aiosqlite.Connection:
@@ -14,6 +16,7 @@ async def _get_conn() -> aiosqlite.Connection:
         _conn = await aiosqlite.connect(str(DB_PATH))
         _conn.row_factory = aiosqlite.Row
         await _conn.execute("PRAGMA journal_mode=WAL")
+        await _conn.execute("PRAGMA busy_timeout=5000")
     return _conn
 
 
@@ -66,24 +69,26 @@ async def get_session(session_id: str) -> Optional[dict]:
 
 async def create_session(session_id: str):
     conn = await _get_conn()
-    await conn.execute(
-        "INSERT OR IGNORE INTO sessions (session_id) VALUES (?)",
-        (session_id,)
-    )
-    await conn.commit()
+    async with _write_lock:
+        await conn.execute(
+            "INSERT OR IGNORE INTO sessions (session_id) VALUES (?)",
+            (session_id,)
+        )
+        await conn.commit()
 
 
 async def save_message(session_id: str, role: str, content: Optional[str]):
     conn = await _get_conn()
-    await conn.execute(
-        "INSERT INTO messages (session_id, role, content) VALUES (?, ?, ?)",
-        (session_id, role, content)
-    )
-    await conn.execute(
-        "UPDATE sessions SET updated_at = CURRENT_TIMESTAMP WHERE session_id = ?",
-        (session_id,)
-    )
-    await conn.commit()
+    async with _write_lock:
+        await conn.execute(
+            "INSERT INTO messages (session_id, role, content) VALUES (?, ?, ?)",
+            (session_id, role, content)
+        )
+        await conn.execute(
+            "UPDATE sessions SET updated_at = CURRENT_TIMESTAMP WHERE session_id = ?",
+            (session_id,)
+        )
+        await conn.commit()
 
 
 _ALLOWED_COLS = {
@@ -94,31 +99,33 @@ _ALLOWED_COLS = {
 
 async def update_session(session_id: str, **kwargs):
     conn = await _get_conn()
-    fields = []
-    values = []
-    for key, val in kwargs.items():
-        if key not in _ALLOWED_COLS:
-            raise ValueError(f"非法列名: {key}")
-        if key == "evaluation_answers":
-            val = json.dumps(val, ensure_ascii=False)
-        elif isinstance(val, bool):
-            val = int(val)
-        fields.append(f"{key} = ?")
-        values.append(val)
-    values.append(session_id)
-    await conn.execute(
-        f"UPDATE sessions SET {', '.join(fields)}, updated_at = CURRENT_TIMESTAMP "
-        f"WHERE session_id = ?",
-        values
-    )
-    await conn.commit()
+    async with _write_lock:
+        fields = []
+        values = []
+        for key, val in kwargs.items():
+            if key not in _ALLOWED_COLS:
+                raise ValueError(f"非法列名: {key}")
+            if key == "evaluation_answers":
+                val = json.dumps(val, ensure_ascii=False)
+            elif isinstance(val, bool):
+                val = int(val)
+            fields.append(f"{key} = ?")
+            values.append(val)
+        values.append(session_id)
+        await conn.execute(
+            f"UPDATE sessions SET {', '.join(fields)}, updated_at = CURRENT_TIMESTAMP "
+            f"WHERE session_id = ?",
+            values
+        )
+        await conn.commit()
 
 
 async def delete_session(session_id: str):
     conn = await _get_conn()
-    await conn.execute("DELETE FROM messages WHERE session_id = ?", (session_id,))
-    await conn.execute("DELETE FROM sessions WHERE session_id = ?", (session_id,))
-    await conn.commit()
+    async with _write_lock:
+        await conn.execute("DELETE FROM messages WHERE session_id = ?", (session_id,))
+        await conn.execute("DELETE FROM sessions WHERE session_id = ?", (session_id,))
+        await conn.commit()
 
 
 async def get_or_create_session(session_id: str):

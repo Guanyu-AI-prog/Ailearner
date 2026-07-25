@@ -1,13 +1,14 @@
-import json
+"""评估路由：开始评估 + 答题 + 查看报告。"""
+
 import logging
 
 from fastapi import APIRouter
-from sse_starlette.sse import EventSourceResponse
 
 from agent.schemas import ChatRequest
-from agent.core import handle_message
+from agent.stream_bus import StreamBus
+from agent.orchestrator import handle_message
 from db import get_session, get_or_create_session
-from routes._common import save_state
+from routes._common import sse_response
 
 logger = logging.getLogger(__name__)
 
@@ -21,17 +22,13 @@ async def evaluation_start(request: ChatRequest):
         return {"session_id": request.session_id, "status": "already_started"}
     state.evaluation_started = True
 
-    async def event_generator():
+    async def handler(bus: StreamBus):
         async for chunk in handle_message(state, request.message, stream=True):
-            if chunk["type"] == "content":
-                yield {"data": json.dumps({"type": "content", "text": chunk["text"]}, ensure_ascii=False)}
-            elif chunk["type"] == "status":
-                yield {"data": json.dumps({"type": "status", "text": chunk["text"]}, ensure_ascii=False)}
-        initial_count = 0
-        await save_state(state, initial_count)
-        yield {"data": json.dumps({"type": "done", "text": ""}, ensure_ascii=False)}
+            if chunk["type"] in ("content", "status"):
+                await bus.emit(chunk["type"], {"text": chunk["text"]})
+        await bus.emit_done()
 
-    return EventSourceResponse(event_generator())
+    return await sse_response(handler, state, 0)
 
 
 @router.post("/answer")
@@ -40,22 +37,13 @@ async def evaluation_answer(request: ChatRequest):
     if not state.evaluation_started:
         return {"session_id": request.session_id, "status": "not_started"}
 
-    async def event_generator():
-        initial_count = len(state.messages)
-        try:
-            async for chunk in handle_message(state, request.message, stream=True):
-                if chunk["type"] == "content":
-                    yield {"data": json.dumps({"type": "content", "text": chunk["text"]}, ensure_ascii=False)}
-                elif chunk["type"] == "status":
-                    yield {"data": json.dumps({"type": "status", "text": chunk["text"]}, ensure_ascii=False)}
-        except Exception as e:
-            import traceback
-            logger.error(f"evaluation answer error: {e}\n{traceback.format_exc()}")
-            yield {"data": json.dumps({"type": "content", "text": f"出错了：{str(e)}"}, ensure_ascii=False)}
-        await save_state(state, initial_count)
-        yield {"data": json.dumps({"type": "done", "text": ""}, ensure_ascii=False)}
+    async def handler(bus: StreamBus):
+        async for chunk in handle_message(state, request.message, stream=True):
+            if chunk["type"] in ("content", "status"):
+                await bus.emit(chunk["type"], {"text": chunk["text"]})
+        await bus.emit_done()
 
-    return EventSourceResponse(event_generator())
+    return await sse_response(handler, state, len(state.messages))
 
 
 @router.get("/report/{session_id}")
