@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}AI 学习引路人 - 首页{% endblock %}
+{% block content %}
+<section class="hero">
+    <h1>你适合学 AI 吗？</h1>
+    <p class="hero-subtitle">先别急着买课、别急着装环境。</p>
+    <p class="hero-subtitle">让我帮你判断方向、规划路径，零成本起步。</p>
+    <div class="hero-actions">
+        <a href="/chat" class="btn btn-primary">开始评估 →</a>
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature-card">
+        <div class="feature-icon">[1]</div>
+        <h3>入门评估</h3>
+        <p>7 个问题，判断你是否适合学 AI、学什么方向、学到什么水平</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">[2]</div>
+        <h3>路径规划</h3>
+        <p>根据你的背景和目标，生成个性化学习路径</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">[3]</div>
+        <h3>资源推荐</h3>
+        <p>从知识库 + 网络搜索，推荐最适合你的学习资源</p>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">[4]</div>
+        <h3>零成本方案</h3>
+        <p>没有电脑？没有预算？照样能从零开始学 AI</p>
+    </div>
+</section>
+
+<section class="how-it-works">
+    <h2>怎么用</h2>
+    <ol>
+        <li><strong>开始对话</strong> — 告诉我想学 AI</li>
+        <li><strong>回答问题</strong> — 7 个简单问题，了解你的情况</li>
+        <li><strong>获得评估</strong> — 方向推荐 + 学习路径 + 第一步行动</li>
+        <li><strong>自由追问</strong> — 深入任何话题，我能搜索 + 查知识库</li>
+    </ol>
+</section>
+
+<section class="faq">
+    <h2>常见问题</h2>
+    <div class="faq-item">
+        <h4>我不会编程，能学 AI 吗？</h4>
+        <p>能。AI 不只是写代码。AI 产品、提示词工程、AI 应用方向都不需要编程基础。</p>
+    </div>
+    <div class="faq-item">
+        <h4>需要多好的电脑？</h4>
+        <p>不需要好电脑。用无影云电脑就行，新用户免费一个月（4核8G）。手机、旧笔记本都能远程连上，和用本地电脑一样。免费到期后换号或续费都行。</p>
+    </div>
+    <div class="faq-item">
+        <h4>要花多少钱？</h4>
+        <p>大部分优质资源都是免费的。我会优先推荐零成本方案。</p>
+    </div>
+</section>
+{% endblock %}

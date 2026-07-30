@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}AI 学习引路人 - 对话{% endblock %}
+{% block head %}
+<style>
+    body { display: block; min-height: auto; }
+    body > * { position: static; }
+    .site-header, .site-footer { display: none !important; }
+    main.container { max-width: none; padding: 0; margin: 0; display: block; }
+    main.container::before { display: none; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="app-shell">
+    <!-- 顶部导航栏 -->
+    <header class="app-nav">
+        <div class="app-nav-left">
+            <div class="app-nav-avatar">
+                <svg viewBox="0 0 32 32" width="32" height="32">
+                    <defs>
+                        <linearGradient id="av" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#60a5fa"/>
+                            <stop offset="100%" style="stop-color:#a78bfa"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="32" height="32" rx="8" fill="url(#av)"/>
+                    <text x="16" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#fff" font-family="Arial,sans-serif">AI</text>
+                </svg>
+            </div>
+            <div class="app-nav-text">
+                <span class="app-nav-title">AI 学习引路人</span>
+                <span class="app-nav-status"><span class="status-dot"></span>在线</span>
+            </div>
+        </div>
+        <button class="app-nav-menu" id="menu-btn" onclick="toggleMenu()">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="4" r="1.8" fill="rgba(255,255,255,.7)"/>
+                <circle cx="10" cy="10" r="1.8" fill="rgba(255,255,255,.7)"/>
+                <circle cx="10" cy="16" r="1.8" fill="rgba(255,255,255,.7)"/>
+            </svg>
+        </button>
+        <!-- 下拉菜单 -->
+        <div class="app-menu-dropdown" id="menu-dropdown">
+            <button onclick="resetChat()">🔄 重置对话</button>
+            <button onclick="showAbout()">ℹ️ 关于</button>
+        </div>
+    </header>
+
+    <!-- 消息区域 -->
+    <div class="app-messages" id="chat-messages">
+        <!-- 欢迎消息 -->
+        <div class="msg msg-ai msg-appear">
+            <div class="msg-bubble">
+                <p>你好！我是 <strong>AI 学习引路人</strong> 👋</p>
+                <p>我可以帮你：</p>
+                <ul>
+                    <li>判断你是否适合学 AI</li>
+                    <li>规划个性化学习路径</li>
+                    <li>推荐零成本入门方案</li>
+                </ul>
+                <p>从下面选一个开始，或者直接问我：</p>
+            </div>
+            <span class="msg-time">刚刚</span>
+        </div>
+    </div>
+
+    <!-- 快捷回复 -->
+    <div class="quick-bar" id="quick-bar">
+        <div class="quick-scroll">
+            <button class="quick-chip" onclick="quickSend('帮我评估')">👋 帮我评估</button>
+            <button class="quick-chip" onclick="quickSend('给我一个学习路径')">🗺️ 学习路径</button>
+            <button class="quick-chip" onclick="quickSend('我没有电脑，能学吗')">💰 零成本方案</button>
+            <button class="quick-chip" onclick="quickSend('AI现在能做什么')">❓ 随便聊聊</button>
+        </div>
+    </div>
+
+    <!-- 底部输入栏 -->
+    <div class="app-input-bar">
+        <button class="input-voice" title="语音输入（开发中）">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+        </button>
+        <div class="input-wrap">
+            <textarea id="user-input" rows="1" placeholder="输入你的问题..." oninput="autoResize(this); toggleSend()" onkeydown="handleKeyDown(event)"></textarea>
+        </div>
+        <button class="input-send" id="send-btn" onclick="sendMessage()" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
+            </svg>
+        </button>
+    </div>
+</div>
+{% endblock %}

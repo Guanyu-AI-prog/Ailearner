@@ -1,0 +1,24 @@
+{
+  "name": "AI 学习引路人",
+  "short_name": "AILearner",
+  "description": "帮你判断该不该学 AI、学什么方向、怎么零成本入门",
+  "start_url": "/chat",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
