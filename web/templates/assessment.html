@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}AI 能力测评 - AI 学习引路人{% endblock %}
+{% block head %}
+<script defer src="/static/assessment.js"></script>
+<link rel="stylesheet" href="/static/assessment.css">
+{% endblock %}
+{% block content %}
+<section
+    id="assessment-root"
+    class="assessment-shell"
+    data-assessment-page="{{ page }}"
+    data-assessment-id="{{ assessment_id }}"
+>
+    <noscript>请启用 JavaScript 后使用结构化测评功能。</noscript>
+</section>
+{% endblock %}

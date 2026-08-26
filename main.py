@@ -46,9 +46,12 @@ from routes.chat import router as chat_router
 from routes.evaluation import router as evaluation_router
 from routes.persona import router as persona_router
 
+from routes.structured_assessment import api_router as structured_api_router, page_router as structured_page_router
 app.include_router(chat_router, dependencies=[Depends(verify_auth)])
 app.include_router(evaluation_router, dependencies=[Depends(verify_auth)])
 app.include_router(persona_router, dependencies=[Depends(verify_auth)])
+app.include_router(structured_page_router)
+app.include_router(structured_api_router, dependencies=[Depends(verify_auth)])
 
 
 @app.get("/", response_class=HTMLResponse)

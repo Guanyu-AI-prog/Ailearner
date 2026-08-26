@@ -3,3 +3,6 @@ __pycache__/
 .env
 sessions.json
 *.db
+*.db-shm
+*.db-wal
+.venv/

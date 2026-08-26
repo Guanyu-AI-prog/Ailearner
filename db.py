@@ -20,7 +20,7 @@ async def _get_conn() -> aiosqlite.Connection:
     return _conn
 
 
-async def init_db():
+async def init_db() -> None:
     conn = await _get_conn()
     await conn.executescript("""
         CREATE TABLE IF NOT EXISTS sessions (
@@ -42,6 +42,17 @@ async def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (session_id) REFERENCES sessions(session_id)
         );
+        CREATE TABLE IF NOT EXISTS structured_assessments (
+            id TEXT PRIMARY KEY,
+            session_id TEXT NOT NULL,
+            answers TEXT NOT NULL,
+            report TEXT NOT NULL,
+            overall_score INTEGER NOT NULL,
+            level TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_structured_assessments_session_created
+            ON structured_assessments (session_id, created_at DESC);
     """)
     await conn.commit()
 
@@ -153,3 +164,87 @@ async def close_db():
         await _conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
         await _conn.close()
         _conn = None
+
+
+def _deserialize_assessment(row: aiosqlite.Row) -> dict[str, object]:
+    """Convert a database row into the public assessment representation."""
+    assessment = dict(row)
+    assessment["answers"] = json.loads(assessment["answers"])
+    assessment["report"] = json.loads(assessment["report"])
+    return assessment
+
+
+async def create_structured_assessment(
+    assessment_id: str,
+    session_id: str,
+    answers: dict[str, str],
+    report: dict[str, object],
+) -> None:
+    """Persist one completed structured assessment."""
+    conn = await _get_conn()
+    async with _write_lock:
+        await conn.execute(
+            """
+            INSERT INTO structured_assessments
+                (id, session_id, answers, report, overall_score, level)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                assessment_id,
+                session_id,
+                json.dumps(answers, ensure_ascii=False),
+                json.dumps(report, ensure_ascii=False),
+                int(report["overall_score"]),
+                str(report["level"]),
+            ),
+        )
+        await conn.commit()
+
+
+async def get_structured_assessment(assessment_id: str) -> Optional[dict[str, object]]:
+    """Fetch one completed structured assessment by its identifier."""
+    conn = await _get_conn()
+    cursor = await conn.execute(
+        "SELECT * FROM structured_assessments WHERE id = ?", (assessment_id,)
+    )
+    row = await cursor.fetchone()
+    return _deserialize_assessment(row) if row else None
+
+
+async def list_structured_assessments(session_id: str) -> list[dict[str, object]]:
+    """List a session's assessment summaries from newest to oldest."""
+    conn = await _get_conn()
+    cursor = await conn.execute(
+        """
+        SELECT id, session_id, overall_score, level, created_at
+        FROM structured_assessments
+        WHERE session_id = ?
+        ORDER BY created_at DESC, rowid DESC
+        """,
+        (session_id,),
+    )
+    return [dict(row) for row in await cursor.fetchall()]
+
+
+async def delete_structured_assessment(assessment_id: str) -> bool:
+    """Delete one structured assessment and report whether it existed."""
+    conn = await _get_conn()
+    async with _write_lock:
+        cursor = await conn.execute(
+            "DELETE FROM structured_assessments WHERE id = ?", (assessment_id,)
+        )
+        await conn.commit()
+    return cursor.rowcount > 0
+
+
+async def clear_structured_assessments(session_id: str) -> int:
+    """Delete all structured assessments belonging to one session."""
+    conn = await _get_conn()
+    async with _write_lock:
+        cursor = await conn.execute(
+            "DELETE FROM structured_assessments WHERE session_id = ?", (session_id,)
+        )
+        await conn.commit()
+    changes_cursor = await conn.execute("SELECT changes()")
+    changes_row = await changes_cursor.fetchone()
+    return int(changes_row[0]) if changes_row else 0
