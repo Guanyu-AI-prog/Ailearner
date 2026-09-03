@@ -39,6 +39,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="AI 学习引路人", lifespan=lifespan)
 
+@app.middleware("http")
+async def no_cache_middleware(request: Request, call_next):
+    response = await call_next(request)
+    if "text/html" in response.headers.get("content-type", ""):
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+    return response
+
 templates = Jinja2Templates(directory="web/templates")
 app.mount("/static", StaticFiles(directory="web/static"), name="static")
 
