@@ -11,6 +11,21 @@ def is_evaluation_in_progress(state: SessionState) -> bool:
     return state.evaluation_started and not state.evaluation_done
 
 
+# 问句标记：用户是在「先弄明白」，不是「要做问卷」
+_QUESTION_MARKS = (
+    "什么", "区别", "为什么", "怎么", "如何", "哪些", "多少",
+    "是不是", "值不值", "吗", "？", "?",
+)
+
+# 显式请求评估：即使带问号也直接启动
+EXPLICIT_EVAL = ("帮我评估", "我要评估", "评估一下", "做个评估", "开始评估")
+
+
+def looks_like_question(message: str) -> bool:
+    """判断这条消息是不是一个提问（提问不触发评估）。"""
+    return any(t in message for t in _QUESTION_MARKS)
+
+
 def should_start_evaluation(message: str) -> bool:
     """判断用户消息是否应触发评估。"""
     triggers = [
@@ -181,3 +196,58 @@ async def continue_evaluation(state: SessionState, message: str, stream: bool = 
         reply += f"{i}. {opt}\n"
     state.messages.append(Message(role="assistant", content=reply))
     yield {"type": "content", "text": reply}
+
+
+# ─── 评估进行中的统一入口（带逃生阀）────────────────────────────────
+
+def _matches_current(state: SessionState, message: str) -> bool:
+    """判断输入是否是当前问题的合法答案（复用已有匹配函数，不改其逻辑）。"""
+    phase = state.evaluation_phase
+
+    if phase == 0:
+        return _match_option(message.strip(), config.EVALUATION_FIRST_QUESTION["options"]) is not None
+
+    if state.evaluation_path == "use":
+        if phase == 1:
+            scenario, _ = _match_scenario(message)
+            return scenario is not None
+        if phase == 2:
+            return _match_option(message, config.USE_AI_QUESTIONS[0]["options"]) is not None
+        if phase == 3:
+            return _match_option(message, config.USE_AI_QUESTIONS[1]["options"]) is not None
+        return False
+
+    q_idx = phase - 1
+    if 0 <= q_idx < len(config.LEARN_AI_QUESTIONS):
+        return _match_option(message, config.LEARN_AI_QUESTIONS[q_idx]["options"]) is not None
+    return False
+
+
+def current_question_text(state: SessionState) -> str:
+    """当前正在问的问题：取最后一条助手消息（每题都已落库）。"""
+    for m in reversed(state.messages):
+        if m.role == "assistant" and m.content.strip():
+            return m.content.strip()
+    return ""
+
+
+async def continue_evaluation_with_fallback(state: SessionState, message: str, stream: bool = True):
+    """评估进行中的分发：能作答就作答；是提问就先回答再回到评估。"""
+    if _matches_current(state, message):
+        async for chunk in continue_evaluation(state, message, stream):
+            yield chunk
+        return
+
+    if looks_like_question(message):
+        question_text = current_question_text(state)  # 先取，normal_chat 之后会追加回答
+        from agent.core import normal_chat  # 延迟导入，避免与 core 形成导入环
+        async for chunk in normal_chat(state, message, stream):
+            yield chunk
+        if question_text:
+            reply = f"\n\n---\n（回到刚才的问题）\n\n{question_text}"
+            state.messages.append(Message(role="assistant", content=reply))
+            yield {"type": "content", "text": reply}
+        return
+
+    async for chunk in continue_evaluation(state, message, stream):
+        yield chunk
