@@ -1,5 +1,6 @@
 """Structured assessment API and page routes."""
 
+import logging
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, Request
@@ -15,8 +16,14 @@ from db import (
     get_structured_assessment,
     list_structured_assessments,
 )
-from services.assessment_service import generate_assessment_report
+import asyncio
 
+from services.assessment_service import generate_assessment_report
+from services.report_enricher import enrich_report
+from db import update_structured_assessment_report
+
+
+logger = logging.getLogger(__name__)
 
 api_router = APIRouter(prefix="/api/assessments", tags=["structured-assessments"])
 page_router = APIRouter(tags=["structured-assessment-pages"])
@@ -87,6 +94,16 @@ async def submit_assessment(payload: StructuredAssessmentRequest) -> dict[str, o
     report = generate_assessment_report(answers)
     assessment_id = str(uuid4())
     await create_structured_assessment(assessment_id, payload.session_id, answers, report)
+
+    async def _run_enrichment() -> None:
+        enriched, source = await enrich_report(report, answers)
+        if source == "enriched":
+            await update_structured_assessment_report(assessment_id, enriched)
+            logger.info("测评报告已个人化改写 %s", assessment_id)
+        else:
+            logger.info("测评报告保持模板版 %s", assessment_id)
+
+    asyncio.create_task(_run_enrichment())
     return {"id": assessment_id, "report": report}
 
 

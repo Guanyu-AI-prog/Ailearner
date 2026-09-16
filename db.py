@@ -201,6 +201,28 @@ async def create_structured_assessment(
         await conn.commit()
 
 
+async def update_structured_assessment_report(
+    assessment_id: str, report: dict[str, object]
+) -> None:
+    """Overwrite one assessment's report (e.g. after LLM enrichment)."""
+    conn = await _get_conn()
+    async with _write_lock:
+        await conn.execute(
+            """
+            UPDATE structured_assessments
+               SET report = ?, overall_score = ?, level = ?
+             WHERE id = ?
+            """,
+            (
+                json.dumps(report, ensure_ascii=False),
+                int(report["overall_score"]),
+                str(report["level"]),
+                assessment_id,
+            ),
+        )
+        await conn.commit()
+
+
 async def get_structured_assessment(assessment_id: str) -> Optional[dict[str, object]]:
     """Fetch one completed structured assessment by its identifier."""
     conn = await _get_conn()

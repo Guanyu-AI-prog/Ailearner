@@ -6,3 +6,5 @@ sessions.json
 *.db-shm
 *.db-wal
 .venv/
+run.log
+run.pid
