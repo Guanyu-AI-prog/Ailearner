@@ -47,16 +47,6 @@ python main.py
 
 打开 http://localhost:8000/chat
 
-### Docker 部署
-
-```bash
-cp .env.example .env
-# 编辑 .env，填入 API Key
-docker-compose up -d
-```
-
-打开 http://localhost:8000/chat
-
 ## 项目结构
 
 ```
@@ -79,8 +69,6 @@ ailearner/
 ├── web/
 │   ├── templates/       # Jinja2 模板
 │   └── static/          # CSS/JS/图片
-├── Dockerfile
-├── docker-compose.yml
 ├── requirements.txt
 └── .env.example
 ```
