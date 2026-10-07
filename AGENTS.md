@@ -68,8 +68,10 @@
 - 新建 `CODE_REVIEW_2.md`：第二期审查报告文档
 
 # Git推送规则
-- 远程仓库：git@github.com:Guanyu-AI-prog/code-transfer.git
+- 远程仓库：git@github.com:Guanyu-AI-prog/Ailearner.git
 - 每次改动后推送到GitHub
-- Github token：***REMOVED***
+- 凭据：SSH key `~/.ssh/id_ed25519_github`，已在 `~/.ssh/config` 里绑定 `github.com`，不必再手动 `-i`
+- 私钥设了 passphrase，钥匙串已记住。非交互环境若报 `Permission denied (publickey)`，先执行 `ssh-add --apple-use-keychain ~/.ssh/id_ed25519_github`
+- **不要把 token、密钥、口令明文写进本文件**——本文件随仓库推送，写进来等于公开泄露
 
 
