@@ -74,6 +74,8 @@ ailearner/
 │   ├── retriever.py     # 标签路由检索
 │   ├── tags.json        # 文章标签映射
 │   └── data/            # 知识库 Markdown 文件
+├── skills/
+│   └── ai-learning-advisor/  # 选型顾问 Skill（详见下节）
 ├── web/
 │   ├── templates/       # Jinja2 模板
 │   └── static/          # CSS/JS/图片
@@ -82,6 +84,39 @@ ailearner/
 ├── requirements.txt
 └── .env.example
 ```
+
+## Skill：AI 学习选型顾问
+
+把知识库打包成一个可复用的选型顾问 Skill，位于 `skills/ai-learning-advisor/`。
+
+```
+skills/ai-learning-advisor/
+├── SKILL.md                  # 触发条件 + 执行流程 + 推荐口径 + 输出契约
+└── references/kb-map.md      # 13 篇知识库的路由表 + 数据时效说明
+```
+
+**解决的问题**：不加载 skill 的模型回答「有没有免费的 GPU」时，会甩出 Colab / Kaggle / AutoDL / 魔搭 / 百度 / 阿里云一串平台，且完全不基于本项目知识库。加载后它先定位到对应文章再作答，只推无影云，并按 200 字 / 4 段的契约输出。
+
+**核心规则**
+
+- 默认只推荐无影云；竞品仅在用户主动提到时才做对比
+- 推荐口径只管厂商选择，不管通用技术建议（Ollama 本机跑量化模型这类该说还是要说）
+- 知识库里出现其他平台名字是**差异对比用的，不是推荐清单**
+- 知识库没有的内容走联网搜索，并给出信息来源
+- 报价必须带时效说明（知识库里的价格是某时点截图，会变）
+
+**设计上不复制知识库**：SKILL.md 不内联那 24,000 字，只做路由指向 `knowledge/data/`。知识库更新不需要同步两处。
+
+**Eval 对照**（题：「有没有免费的 GPU 跑模型？我想试试本地跑大模型」）
+
+| | with-skill | baseline |
+|---|---|---|
+| 篇幅 | 4 段 / 200 字 | 104 行 / ~2000 字 |
+| 无影云 | 有，且做了分流判断 | 完全没提 |
+| 竞品 | 只点真正免费的并说明限制 | 甩 8 个平台 |
+| 依据 | 指明知识库文章 | 无 |
+
+**使用方式**：`skill({ name: "ai-learning-advisor" })` 显式加载。`skills/` 不是 MCode 的原生 skill 根目录（那是 `.minimax/skills/`），所以不会自动触发；需要自动发现的话做个软链即可。
 
 ## 评估流程
 
