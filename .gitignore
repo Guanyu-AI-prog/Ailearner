@@ -8,3 +8,6 @@ sessions.json
 .venv/
 run.log
 run.pid
+
+# 嵌套仓库（另一个项目）
+BOSS直聘智能投递助手/
