@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+.DS_Store
 .env
 sessions.json
 *.db
@@ -11,3 +12,7 @@ run.pid
 
 # 嵌套仓库（另一个项目）
 BOSS直聘智能投递助手/
+
+# IM 工具（cc-connect 等）落在工作目录的运行残留
+.cc-connect/
+.attachments/
