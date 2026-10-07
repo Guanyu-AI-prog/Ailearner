@@ -1,0 +1,18 @@
+# 身份归属映射：把同一作者在不同机器/工具下的多个身份归并到一个
+#
+# 格式：
+#   标准名 <标准邮箱> <原名> <原邮箱>
+#
+# 背景：
+# - 本机 git config 在不同环境下配过不同 user.name / user.email
+# - OpenHands 等 AI agent 在本机提交时会用自己的作者身份
+# - 不映射的话，Contributors 面板会显示成好几个人
+
+Guanyu-AI-prog <guanyu-ai-prog@users.noreply.github.com> Guanyu <guanyu@GuanyudeMac-mini.local>
+Guanyu-AI-prog <guanyu-ai-prog@users.noreply.github.com> Guanyu-AI-prog <zy_zy2@126.com>
+Guanyu-AI-prog <guanyu-ai-prog@users.noreply.github.com> Guanyu-AI-prog <271916419+Guanyu-AI-prog@users.noreply.github.com>
+Guanyu-AI-prog <guanyu-ai-prog@users.noreply.github.com> Guanyu <guanyu@example.com>
+Guanyu-AI-prog <guanyu-ai-prog@users.noreply.github.com> pi-agent <pi@local>
+
+Guanyu-AI-prog <guanyu-ai-prog@users.noreply.github.com> openhands <openhands@all-hands.dev>
+Guanyu-AI-prog <guanyu-ai-prog@users.noreply.github.com> LagG <270983278+glag609lk-prog@users.noreply.github.com>
